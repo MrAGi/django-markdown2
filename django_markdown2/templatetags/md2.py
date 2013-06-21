@@ -7,7 +7,7 @@ This code is based on django's markup contrib.
 
 from django import template
 from django.conf import settings
-from django.utils.encoding import smart_str, force_unicode
+from django.utils.encoding import smart_str, force_text
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -33,8 +33,8 @@ def markdown2(value, arg=''):
         import markdown2
     except ImportError:
         if settings.DEBUG:
-            raise template.TemplateSyntaxError, "Error in {% markdown %} filter: The python-markdown2 library isn't installed."
-        return force_unicode(value)
+            raise template.TemplateSyntaxError("Error in {% markdown %} filter: The python-markdown2 library isn't installed.")
+        return force_text(value)
     else:
         def parse_extra(extra):
             if ':' not in extra:
@@ -52,7 +52,7 @@ def markdown2(value, arg=''):
         else:
             safe_mode = False
 
-        return mark_safe(markdown2.markdown(force_unicode(value), extras=extras, safe_mode=safe_mode))
+        return mark_safe(markdown2.markdown(force_text(value), extras=extras, safe_mode=safe_mode))
 markdown2.is_safe = True
 
 register.filter(markdown2)
